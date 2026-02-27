@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup Admin — Beras Zakat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            padding: 20px;
+        }
+
+        .box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .logo h1 {
+            color: #f8fafc;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .badge {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+            text-align: center;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .msg {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .msg.show {
+            display: block;
+        }
+
+        .msg.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .msg.success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .msg.info {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .uid-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #94a3b8;
+            word-break: break-all;
+            margin-top: 8px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #334155;
+            margin: 24px 0;
+        }
+
+        .go-login {
+            display: block;
+            text-align: center;
+            color: #3b82f6;
+            font-size: 13px;
+            text-decoration: none;
+            margin-top: 16px;
+        }
+
+        .go-login:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="logo">
+            <span class="icon">⚙️</span>
+            <h1>Setup Admin</h1>
+            <p>Buat akun admin pertama untuk Beras Zakat</p>
+        </div>
+        <div class="badge">⚠️ Halaman ini hanya untuk setup awal. Hapus atau amankan setelah digunakan.</div>
+
+        <!-- STEP 1: Login -->
+        <div class="step active" id="step1">
+            <div class="form-group">
+                <label>Email Admin</label>
+                <input type="email" id="s-email" placeholder="admin@email.com" autocomplete="email" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="s-pass" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <div class="form-group">
+                <label>Nama Admin</label>
+                <input type="text" id="s-nama" placeholder="Administrator" />
+            </div>
+            <button class="btn btn-primary" id="btn-setup" onclick="doSetup()">🚀 Buat Akun Admin</button>
+            <div class="msg" id="msg1"></div>
+        </div>
+
+        <!-- STEP 2: Sukses -->
+        <div class="step" id="step2">
+            <div class="msg success show">
+                ✅ Akun admin berhasil dibuat! Anda sekarang bisa login ke aplikasi.
+            </div>
+            <hr class="divider" />
+            <p style="color:#94a3b8;font-size:13px;margin-bottom:8px">UID akun Anda:</p>
+            <div class="uid-box" id="uid-display"></div>
+            <a href="index.html" class="go-login">→ Pergi ke halaman login</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword }
+            from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
+            from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Import konfigurasi dari firebase-config.js
+        import { auth, db } from './assets/js/firebase-config.js';
+
+        const showMsg = (id, text, type) => {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `msg ${type} show`;
+        };
+
+        window.doSetup = async () => {
+            const email = document.getElementById('s-email').value.trim();
+            const pass = document.getElementById('s-pass').value;
+            const nama = document.getElementById('s-nama').value.trim() || 'Administrator';
+            const btn = document.getElementById('btn-setup');
+
+            if (!email || !pass) { showMsg('msg1', '⚠ Email dan password wajib diisi.', 'error'); return; }
+
+            btn.disabled = true;
+            btn.textContent = 'Memproses...';
+            showMsg('msg1', 'Menghubungkan ke Firebase...', 'info');
+
+            try {
+                let uid;
+
+                // Coba login dulu, kalau gagal coba buat akun baru
+                try {
+                    const cred = await signInWithEmailAndPassword(auth, email, pass);
+                    uid = cred.user.uid;
+                    showMsg('msg1', 'Login berhasil. Membuat dokumen admin...', 'info');
+                } catch (loginErr) {
+                    if (loginErr.code === 'auth/user-not-found' || loginErr.code === 'auth/invalid-credential') {
+                        showMsg('msg1', 'Akun tidak ditemukan, mencoba membuat akun baru...', 'info');
+                        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                        uid = cred.user.uid;
+                    } else {
+                        throw loginErr;
+                    }
+                }
+
+                // Simpan/overwrite dokumen admin di Firestore
+                await setDoc(doc(db, 'users', uid), {
+                    email,
+                    nama,
+                    role: 'admin',
+                    createdAt: serverTimestamp()
+                });
+
+                // Verifikasi dokumen berhasil dibuat
+                const snap = await getDoc(doc(db, 'users', uid));
+                if (!snap.exists()) throw new Error('Dokumen Firestore tidak bisa diverifikasi.');
+
+                document.getElementById('uid-display').textContent = uid;
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+
+            } catch (err) {
+                let msg = err.message;
+                if (err.code === 'auth/wrong-password') msg = 'Password salah.';
+                else if (err.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar. Coba login dulu.';
+                else if (err.code === 'auth/weak-password') msg = 'Password minimal 6 karakter.';
+                else if (err.code === 'permission-denied' || err.message?.includes('permission')) {
+                    msg = '🔒 Firestore rules memblokir akses. Pastikan rules sudah di-publish di Firebase Console.';
+                }
+                showMsg('msg1', '⚠ ' + msg, 'error');
+                btn.disabled = false;
+                btn.textContent = '🚀 Buat Akun Admin';
+            }
+        };
+    </script>
+</body>
+
+</html>

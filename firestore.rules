@@ -23,10 +23,12 @@ service cloud.firestore {
     // ===== USERS =====
     // Admin bisa baca/tulis semua user
     // User biasa hanya bisa baca data dirinya sendiri
+    // Catatan: allow create untuk diri sendiri diperlukan untuk setup admin pertama via setup.html
     match /users/{userId} {
-      allow read: if isLoggedIn() && (isAdmin() || request.auth.uid == userId);
-      allow write: if isAdmin();
-      allow create: if isAdmin();
+      allow read:   if isLoggedIn() && (isAdmin() || request.auth.uid == userId);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+      allow create: if isLoggedIn() && request.auth.uid == userId;
     }
 
     // ===== PRODUK =====
