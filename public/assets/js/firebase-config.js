@@ -16,13 +16,12 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth
 
 // ⬇️ GANTI DENGAN KONFIGURASI FIREBASE ANDA
 const firebaseConfig = {
-    apiKey: "AIzaSyA2CqwUOfVWOgzfpfhTp8LPyEt4hL3E13g",
-    authDomain: "beras-zakat.firebaseapp.com",
-    projectId: "beras-zakat",
-    storageBucket: "beras-zakat.firebasestorage.app",
-    messagingSenderId: "165052635514",
-    appId: "1:165052635514:web:054292759dc93edcc05ec3",
-    measurementId: "G-HD4DHGQ8LB"
+    apiKey: "AIzaSyCQ3Axgi8uR4jCwy1BzIizT0QspOma0sQ4",
+    authDomain: "zakatapp-v1.firebaseapp.com",
+    projectId: "zakatapp-v1",
+    storageBucket: "zakatapp-v1.firebasestorage.app",
+    messagingSenderId: "64879688270",
+    appId: "1:64879688270:web:1be8def2024e9d2cfc211f"
 };
 
 const app = initializeApp(firebaseConfig);
