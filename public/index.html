@@ -90,8 +90,12 @@
 
             try {
                 const cred = await signInWithEmailAndPassword(auth, email, password);
-                const snap = await getDoc(doc(db, 'users', cred.user.uid));
-                if (!snap.exists()) throw new Error('Data user tidak ditemukan. Hubungi admin.');
+                const uid = cred.user.uid;
+                const snap = await getDoc(doc(db, 'users', uid));
+                if (!snap.exists()) {
+                    // Tampilkan UID untuk debugging — bandingkan dengan Document ID di Firestore
+                    throw new Error(`Dokumen user tidak ditemukan di Firestore.\n\nUID Anda: ${uid}\n\nPastikan Document ID di koleksi "users" Firestore persis sama dengan UID ini.`);
+                }
                 const role = snap.data().role;
                 window.location.href = role === 'admin' ? 'admin.html' : 'penjual.html';
             } catch (err) {
@@ -100,15 +104,19 @@
                     msg = 'Email atau password salah.';
                 } else if (err.code === 'auth/too-many-requests') {
                     msg = 'Terlalu banyak percobaan. Coba beberapa menit lagi.';
+                } else if (err.code === 'permission-denied') {
+                    msg = '🔒 Akses Firestore ditolak. Publish Firestore Rules di Firebase Console.';
                 } else if (err.message) {
                     msg = err.message;
                 }
+                errEl.style.whiteSpace = 'pre-wrap';
                 errEl.textContent = '⚠ ' + msg;
                 errEl.classList.add('show');
                 btn.textContent = 'Masuk →';
                 btn.disabled = false;
             }
         };
+
     </script>
 </body>
 
