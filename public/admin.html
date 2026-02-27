@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Beras Zakat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🌾</div>
+                    <div class="logo-text">
+                        <span class="logo-title">Beras Zakat</span>
+                        <span class="logo-sub">Sistem Online</span>
+                        <span class="role-badge admin">👑 Admin</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" id="nav-dashboard" onclick="showSec('dashboard')"><span
+                        class="nav-icon">📊</span> Dashboard</button>
+                <button class="nav-item" id="nav-produk" onclick="showSec('produk')"><span class="nav-icon">📦</span>
+                    Produk</button>
+                <button class="nav-item" id="nav-transaksi" onclick="showSec('transaksi')"><span
+                        class="nav-icon">📋</span> Semua Transaksi</button>
+                <button class="nav-item" id="nav-laporan" onclick="showSec('laporan')"><span class="nav-icon">📈</span>
+                    Laporan</button>
+                <button class="nav-item" id="nav-users" onclick="showSec('users')"><span class="nav-icon">👥</span>
+                    Kelola User</button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="admin-avatar">A</div>
+                    <div style="min-width:0">
+                        <div class="user-name" id="admin-name">Admin</div>
+                        <div class="user-email" id="admin-email">-</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="doLogout()">🚪 Keluar</button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <div class="page-title" id="pageTitle">Dashboard</div>
+                </div>
+                <div class="topbar-right" style="display:flex;gap:10px;align-items:center">
+                    <div class="live-badge">
+                        <div class="live-dot"></div> Live
+                    </div>
+                    <div class="date-badge" id="dateBadge"></div>
+                </div>
+            </header>
+
+            <!-- ===== DASHBOARD ===== -->
+            <section class="section active" id="section-dashboard">
+                <div class="section-header">
+                    <h1>Dashboard Admin</h1>
+                    <p>Monitoring real-time seluruh penjualan beras zakat</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card green">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-pemasukan">Rp 0</div>
+                            <div class="stat-label">Total Pemasukan (Lunas)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon">🛒</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-transaksi">0</div>
+                            <div class="stat-label">Total Transaksi</div>
+                        </div>
+                    </div>
+                    <div class="stat-card amber">
+                        <div class="stat-icon">⚖️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-terjual">0</div>
+                            <div class="stat-label">Total Terjual</div>
+                        </div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-today">0</div>
+                            <div class="stat-label">Transaksi Hari Ini</div>
+                        </div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-piutang">Rp 0</div>
+                            <div class="stat-label">Piutang (Belum Lunas)</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Recent -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Transaksi Terbaru</h2><button class="btn btn-outline btn-sm"
+                            onclick="showSec('transaksi')">Lihat Semua →</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tanggal</th>
+                                    <th>Penjual</th>
+                                    <th>Pembeli</th>
+                                    <th>Produk</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-recent"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-recent" style="display:none"><span>🌾</span>
+                        <p>Belum ada transaksi</p>
+                    </div>
+                </div>
+                <!-- Stok -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Stok Produk</h2><button class="btn btn-outline btn-sm" onclick="showSec('produk')">Kelola
+                            →</button>
+                    </div>
+                    <div id="stock-overview"></div>
+                </div>
+            </section>
+
+            <!-- ===== PRODUK ===== -->
+            <section class="section" id="section-produk">
+                <div class="section-header">
+                    <h1>Manajemen Produk</h1>
+                    <p>Kelola jenis dan harga beras zakat</p>
+                </div>
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 id="produk-form-title">Tambah Produk</h2>
+                        </div>
+                        <form onsubmit="saveProduk(event)" id="form-produk">
+                            <input type="hidden" id="produk-edit-id" />
+                            <div class="form-group"><label>Nama Produk</label><input type="text" id="inp-pnama"
+                                    placeholder="Beras Pandan Wangi" required /></div>
+                            <div class="form-group"><label>Satuan</label><select id="inp-psat">
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="liter">Liter</option>
+                                    <option value="kantong">Kantong</option>
+                                </select></div>
+                            <div class="form-group"><label>Harga / Satuan (Rp)</label><input type="number" id="inp-phrg"
+                                    placeholder="0" min="0" required /></div>
+                            <div class="form-group"><label>Stok Tersedia</label><input type="number" id="inp-pstok"
+                                    placeholder="0" min="0" required /></div>
+                            <div class="form-group"><label>Keterangan (opsional)</label><input type="text" id="inp-pket"
+                                    placeholder="Keterangan..." /></div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline" onclick="resetProdukForm()">Reset</button>
+                                <button type="submit" class="btn btn-primary" id="btn-produk-submit">💾 Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Daftar Produk</h2><span class="badge" id="badge-produk">0</span>
+                        </div>
+                        <div id="list-produk">
+                            <div class="empty-state"><span>📦</span>
+                                <p>Belum ada produk</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== TRANSAKSI ===== -->
+            <section class="section" id="section-transaksi">
+                <div class="section-header">
+                    <h1>Semua Transaksi</h1>
+                    <p>Riwayat seluruh transaksi dari semua penjual</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Filter</h2>
+                    </div>
+                    <div class="filter-row">
+                        <div class="form-group"><label>Cari Pembeli</label><input type="text" id="f-nama"
+                                placeholder="Nama..." oninput="filterTrx()" /></div>
+                        <div class="form-group"><label>Penjual</label><select id="f-penjual" onchange="filterTrx()">
+                                <option value="">Semua Penjual</option>
+                            </select></div>
+                        <div class="form-group"><label>Produk</label><select id="f-produk" onchange="filterTrx()">
+                                <option value="">Semua Produk</option>
+                            </select></div>
+                        <div class="form-group"><label>Dari</label><input type="date" id="f-dari"
+                                onchange="filterTrx()" /></div>
+                        <div class="form-group"><label>Sampai</label><input type="date" id="f-sampai"
+                                onchange="filterTrx()" /></div>
+                        <div class="form-group"><label>Status</label><select id="f-status" onchange="filterTrx()">
+                                <option value="">Semua</option>
+                                <option value="Lunas">Lunas</option>
+                                <option value="Belum Lunas">Belum Lunas</option>
+                            </select></div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-outline btn-sm" onclick="resetFilter()">🔄 Reset</button>
+                        <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ Cetak</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Daftar Transaksi</h2><span class="badge" id="badge-trx">0</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tanggal</th>
+                                    <th>Penjual</th>
+                                    <th>Pembeli</th>
+                                    <th>Produk</th>
+                                    <th>Qty</th>
+                                    <th>Harga</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Catatan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-trx"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-trx" style="display:none"><span>📋</span>
+                        <p>Tidak ada transaksi</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== LAPORAN ===== -->
+            <section class="section" id="section-laporan">
+                <div class="section-header">
+                    <h1>Laporan</h1>
+                    <p>Rekap penjualan berdasarkan periode</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Pilih Periode</h2>
+                    </div>
+                    <div class="filter-row">
+                        <div class="form-group"><label>Dari Tanggal</label><input type="date" id="lap-dari" /></div>
+                        <div class="form-group"><label>Sampai Tanggal</label><input type="date" id="lap-sampai" /></div>
+                        <div class="form-group"><label>Penjual</label><select id="lap-penjual">
+                                <option value="">Semua Penjual</option>
+                            </select></div>
+                        <div class="form-group align-end">
+                            <button class="btn btn-outline btn-sm" onclick="lapBulanIni()">📅 Bulan Ini</button>
+                            <button class="btn btn-outline btn-sm" onclick="lapTahunIni()">📆 Tahun Ini</button>
+                            <button class="btn btn-primary" onclick="renderLaporan()">🔍 Tampilkan</button>
+                            <button class="btn btn-outline" onclick="window.print()">🖨️ Cetak</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card green">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="lap-pemasukan">Rp 0</div>
+                            <div class="stat-label" id="lap-pemasukan-label">Total Pemasukan (Lunas)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon">🛒</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="lap-jml">0</div>
+                            <div class="stat-label">Jumlah Transaksi</div>
+                        </div>
+                    </div>
+                    <div class="stat-card amber">
+                        <div class="stat-icon">⚖️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="lap-terjual">0</div>
+                            <div class="stat-label">Total Terjual</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Rincian per Produk</h2>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Terjual</th>
+                                    <th>Pemasukan (Lunas)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-lap"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-lap" style="display:none"><span>📊</span>
+                        <p>Tidak ada data periode ini</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>⏳ Transaksi Belum Lunas</h2>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Penjual</th>
+                                    <th>Pembeli</th>
+                                    <th>Produk</th>
+                                    <th>Total</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-bl"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-bl" style="display:none"><span>✅</span>
+                        <p>Tidak ada tunggakan</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== USERS ===== -->
+            <section class="section" id="section-users">
+                <div class="section-header">
+                    <h1>Kelola User</h1>
+                    <p>Tambah dan atur akun penjual</p>
+                </div>
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Tambah User Baru</h2>
+                        </div>
+                        <form onsubmit="addUser(event)" id="form-user">
+                            <div class="form-group"><label>Nama Lengkap</label><input type="text" id="inp-unama"
+                                    placeholder="Nama penjual" required /></div>
+                            <div class="form-group"><label>Email</label><input type="email" id="inp-uemail"
+                                    placeholder="email@contoh.com" required /></div>
+                            <div class="form-group"><label>Password</label><input type="password" id="inp-upass"
+                                    placeholder="Min. 6 karakter" minlength="6" required /></div>
+                            <div class="form-group"><label>Role</label><select id="inp-urole">
+                                    <option value="penjual">Penjual</option>
+                                    <option value="admin">Admin</option>
+                                </select></div>
+                            <div class="form-actions"><button type="submit" class="btn btn-primary">➕ Tambah
+                                    User</button></div>
+                        </form>
+                        <div class="info-note" style="margin-top:16px">
+                            💡 Setelah user ditambahkan, bagikan email dan password kepada penjual untuk login.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Daftar User</h2><span class="badge" id="badge-users">0</span>
+                        </div>
+                        <div id="list-users">
+                            <div class="empty-state"><span>👥</span>
+                                <p>Belum ada user</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal Hapus -->
+    <div class="modal-overlay" id="modal-hapus" onclick="tutupModal('modal-hapus')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-icon">🗑️</div>
+            <h3>Hapus Data?</h3>
+            <p id="modal-hapus-pesan">Yakin ingin menghapus?</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="tutupModal('modal-hapus')">Batal</button>
+                <button class="btn btn-danger" id="btn-konfirm-hapus">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="assets/js/admin.js"></script>
+</body>
+
+</html>

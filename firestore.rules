@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: cek apakah user login
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+
+    // Helper: cek role user dari koleksi /users
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isLoggedIn() && getRole() == 'admin';
+    }
+
+    function isPenjual() {
+      return isLoggedIn() && getRole() == 'penjual';
+    }
+
+    // ===== USERS =====
+    // Admin bisa baca/tulis semua user
+    // User biasa hanya bisa baca data dirinya sendiri
+    match /users/{userId} {
+      allow read: if isLoggedIn() && (isAdmin() || request.auth.uid == userId);
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+    }
+
+    // ===== PRODUK =====
+    // Admin bisa CRUD, penjual hanya bisa READ
+    match /produk/{produkId} {
+      allow read:  if isLoggedIn();
+      allow write: if isAdmin();
+      // Update stok dibolehkan untuk penjual (via transaction saat catat transaksi)
+      allow update: if isLoggedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stok']);
+    }
+
+    // ===== TRANSAKSI =====
+    // Admin bisa baca/write semua transaksi
+    // Penjual hanya bisa baca/write transaksinya sendiri
+    match /transaksi/{trxId} {
+      allow read:   if isAdmin() || (isPenjual() && resource.data.penjualId == request.auth.uid);
+      allow create: if isPenjual() && request.resource.data.penjualId == request.auth.uid;
+      allow update: if isAdmin() || (isPenjual() && resource.data.penjualId == request.auth.uid);
+      allow delete: if isAdmin() || (isPenjual() && resource.data.penjualId == request.auth.uid);
+    }
+  }
+}

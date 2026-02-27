@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Penjual — Beras Zakat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🌾</div>
+                    <div class="logo-text">
+                        <span class="logo-title">Beras Zakat</span>
+                        <span class="logo-sub">Sistem Online</span>
+                        <span class="role-badge penjual">🧑 Penjual</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" id="nav-dashboard" onclick="showSec('dashboard')"><span
+                        class="nav-icon">📊</span> Dashboard</button>
+                <button class="nav-item" id="nav-catat" onclick="showSec('catat')"><span class="nav-icon">✏️</span>
+                    Catat Transaksi</button>
+                <button class="nav-item" id="nav-riwayat" onclick="showSec('riwayat')"><span class="nav-icon">📋</span>
+                    Riwayat Saya</button>
+                <button class="nav-item" id="nav-stok" onclick="showSec('stok')"><span class="nav-icon">📦</span> Stok
+                    Produk</button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="penjual-avatar">P</div>
+                    <div style="min-width:0">
+                        <div class="user-name" id="penjual-name">Penjual</div>
+                        <div class="user-email" id="penjual-email">-</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="doLogout()">🚪 Keluar</button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <div class="page-title" id="pageTitle">Dashboard</div>
+                </div>
+                <div class="topbar-right" style="display:flex;gap:10px;align-items:center">
+                    <div class="live-badge">
+                        <div class="live-dot"></div> Live
+                    </div>
+                    <div class="date-badge" id="dateBadge"></div>
+                </div>
+            </header>
+
+            <!-- ===== DASHBOARD ===== -->
+            <section class="section active" id="section-dashboard">
+                <div class="section-header">
+                    <h1>Dashboard Penjual</h1>
+                    <p>Ringkasan transaksi Anda hari ini</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card green">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-pemasukan">Rp 0</div>
+                            <div class="stat-label">Pemasukan Saya (Lunas)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon">🛒</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-transaksi">0</div>
+                            <div class="stat-label">Total Transaksi Saya</div>
+                        </div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-today">0</div>
+                            <div class="stat-label">Transaksi Hari Ini</div>
+                        </div>
+                    </div>
+                    <div class="stat-card amber">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="s-piutang">Rp 0</div>
+                            <div class="stat-label">Piutang Saya</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Transaksi Terbaru Saya</h2><button class="btn btn-outline btn-sm"
+                            onclick="showSec('riwayat')">Lihat Semua →</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tanggal</th>
+                                    <th>Pembeli</th>
+                                    <th>Produk</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-recent"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-recent" style="display:none"><span>🌾</span>
+                        <p>Belum ada transaksi</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== CATAT ===== -->
+            <section class="section" id="section-catat">
+                <div class="section-header">
+                    <h1>Catat Transaksi</h1>
+                    <p>Rekam penjualan beras zakat yang sudah terjadi</p>
+                </div>
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 id="catat-title">Form Pencatatan</h2>
+                        </div>
+                        <form onsubmit="saveTrx(event)" id="form-catat">
+                            <input type="hidden" id="trx-edit-id" />
+                            <div class="form-group"><label>Tanggal</label><input type="date" id="inp-tgl" required />
+                            </div>
+                            <div class="form-group"><label>Nama Pembeli</label><input type="text" id="inp-nama"
+                                    placeholder="Nama pembeli / muzakki" required /></div>
+                            <div class="form-group"><label>Produk</label><select id="inp-produk" required
+                                    onchange="autoHarga()">
+                                    <option value="">-- Pilih Produk --</option>
+                                </select></div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Jumlah</label><input type="number" id="inp-qty"
+                                        placeholder="0" min="0.5" step="0.5" required oninput="hitungTotal()" /></div>
+                                <div class="form-group"><label>Harga Satuan</label><input type="number" id="inp-harga"
+                                        placeholder="0" min="0" required oninput="hitungTotal()" /></div>
+                            </div>
+                            <div class="form-group"><label>Total</label>
+                                <div class="total-display" id="total-display">Rp 0</div>
+                            </div>
+                            <div class="form-group"><label>Status</label><select id="inp-status">
+                                    <option value="Lunas">✅ Lunas</option>
+                                    <option value="Belum Lunas">⏳ Belum Lunas</option>
+                                </select></div>
+                            <div class="form-group"><label>Catatan (opsional)</label><textarea id="inp-catatan" rows="2"
+                                    placeholder="Catatan..."></textarea></div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline" onclick="resetCatat()">Reset</button>
+                                <button type="submit" class="btn btn-primary">💾 Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>📌 Panduan</h2>
+                        </div>
+                        <div class="info-steps">
+                            <div class="info-step">
+                                <div class="step-num">1</div>
+                                <div class="step-text">Lakukan transaksi penjualan secara langsung kepada pembeli</div>
+                            </div>
+                            <div class="info-step">
+                                <div class="step-num">2</div>
+                                <div class="step-text">Buka form ini dan isi data transaksi yang sudah terjadi</div>
+                            </div>
+                            <div class="info-step">
+                                <div class="step-num">3</div>
+                                <div class="step-text">Pilih produk — harga otomatis terisi. Cek stok sebelum mencatat
+                                </div>
+                            </div>
+                            <div class="info-step">
+                                <div class="step-num">4</div>
+                                <div class="step-text">Simpan — stok berkurang otomatis dan admin dapat melihat secara
+                                    real-time</div>
+                            </div>
+                        </div>
+                        <div class="info-note">⚡ Data tersimpan langsung ke server dan terlihat oleh admin secara
+                            real-time.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== RIWAYAT ===== -->
+            <section class="section" id="section-riwayat">
+                <div class="section-header">
+                    <h1>Riwayat Saya</h1>
+                    <p>Transaksi yang Anda catat</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Filter</h2>
+                    </div>
+                    <div class="filter-row">
+                        <div class="form-group"><label>Cari Pembeli</label><input type="text" id="r-nama"
+                                placeholder="Nama..." oninput="filterRiwayat()" /></div>
+                        <div class="form-group"><label>Dari</label><input type="date" id="r-dari"
+                                onchange="filterRiwayat()" /></div>
+                        <div class="form-group"><label>Sampai</label><input type="date" id="r-sampai"
+                                onchange="filterRiwayat()" /></div>
+                        <div class="form-group"><label>Status</label><select id="r-status" onchange="filterRiwayat()">
+                                <option value="">Semua</option>
+                                <option value="Lunas">Lunas</option>
+                                <option value="Belum Lunas">Belum Lunas</option>
+                            </select></div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-outline btn-sm" onclick="resetRiwayat()">🔄 Reset</button>
+                        <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ Cetak</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Daftar Transaksi</h2><span class="badge" id="badge-riwayat">0</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tanggal</th>
+                                    <th>Pembeli</th>
+                                    <th>Produk</th>
+                                    <th>Qty</th>
+                                    <th>Harga</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-riwayat"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-riwayat" style="display:none"><span>📋</span>
+                        <p>Tidak ada transaksi</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== STOK ===== -->
+            <section class="section" id="section-stok">
+                <div class="section-header">
+                    <h1>Stok Produk</h1>
+                    <p>Sisa stok beras zakat (hanya bisa dilihat, dikelola admin)</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Daftar Produk & Stok</h2><span class="badge" id="badge-stok">0 produk</span>
+                    </div>
+                    <div id="list-stok">
+                        <div class="empty-state"><span>📦</span>
+                            <p>Belum ada produk</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal Hapus -->
+    <div class="modal-overlay" id="modal-hapus" onclick="tutupModal('modal-hapus')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-icon">🗑️</div>
+            <h3>Hapus Catatan?</h3>
+            <p id="modal-hapus-pesan">Yakin ingin menghapus?</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="tutupModal('modal-hapus')">Batal</button>
+                <button class="btn btn-danger" id="btn-konfirm-hapus">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="assets/js/penjual.js"></script>
+</body>
+
+</html>
